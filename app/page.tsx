@@ -1,101 +1,127 @@
-import Image from "next/image";
+import BemsLogo from '@/components/bems-logo';
+import {ArrowRightIcon} from '@heroicons/react/24/solid';
+import { Mulish,Lusitana } from 'next/font/google';
+import Link from 'next/link';
+import Image from 'next/image'
+import StatCard  from '@/components/stat-card';
+import { ST } from 'next/dist/shared/lib/utils';
+import ChartCard from '@/components/chart-card';
+const mulish = Mulish({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
-export default function Home() {
+export default function Page() {
+  const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+
+  let realTimeLabels = ["00:00","02:00","04:00", "06:00","08:00","10:00","12:00","14:00","16:00","18:00","20:00","22:00",]
+  let realTimeData = [0.8, 1.1, 0.9, 1.3, 1.8, 2.1, 1.9, 2.0, 2.2, 2.3, 2.0, 1.7,]
+  
+  let weeklyLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  let weeklyData = [4.2, 3.8, 4.0, 4.5, 4.1, 5.0, 4.8]
+
+  let categoryLabels = ["Appliances", "Lighting", "HVAC"];
+  let categoryData = [45, 25, 30];
+
+  let totalData = [
+          0.8, 1.1, 0.9, 1.3, 1.8, 2.1, 1.9, 2.0, 2.2, 2.3, 2.0, 1.7, 1.5, 1.2,
+          1.4, 1.6, 1.7, 1.8, 2.0, 1.9, 1.6, 1.4, 1.2, 1.0,
+        ];
+  let roomsData = {
+    Bathroom: [
+      0.1, 0.2, 0.1, 0.1, 0.1, 0.2, 0.3, 0.2, 0.2, 0.2, 0.2, 0.1 /*…*/,
+    ],
+    Bedroom1: [
+      0.1, 0.1, 0.1, 0.2, 0.2, 0.3, 0.2, 0.2, 0.2, 0.3, 0.2, 0.1 /*…*/,
+    ],
+    Kitchen: [
+      0.2, 0.3, 0.2, 0.3, 0.4, 0.5, 0.4, 0.5, 0.5, 0.6, 0.5, 0.4 /*…*/,
+    ],
+    // add more if needed
+  };
+  let { peakInfo, datasets } = getPeakUsage(totalData, hours, roomsData);
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className="flex min-h-screen flex-col items-center">
+      <div className='flex gap-5'>
+        <StatCard title="Today's Total Consumption" value="3.54 kWh" /> 
+        <StatCard title="Daily Cost" value="$4.28" /> 
+        <StatCard title="Savings This Day" value="5% / $1.12" /> 
+        <StatCard title="Yesterday’s Consump & Cost" value="7.12 kWh / $8.60" />  
+      </div>
+      <div className=" w-full max-w-[1280px] grid grid-cols-1 md:[grid-template-columns:repeat(2,minmax(300px,1fr))] gap-5 mt-8">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+        <ChartCard title='Real-Time Usage' type='line' labels={realTimeLabels}  datasets={ [
+            {
+              label: "kW",
+              data: realTimeData,
+              borderColor: "#FDB750",
+              backgroundColor: "rgba(253,183,80,0.3)",
+              fill: true,
+              tension: 0.3,
+            }, ]}
+          options={{ responsive: true, scales: { y: { beginAtZero: true } } }}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+          <ChartCard title='Consumption - Last 7 Days' type='bar' labels={weeklyLabels}  datasets={ [
+            {
+              label: "kWh",
+              data: weeklyData,
+              backgroundColor: "#0F6F89",
+            },]}
+             options={{ responsive: true, scales: { y: { beginAtZero: true } } }}/>
+
+          <ChartCard title='Peak Usage Today' type='line' labels={hours} peak={peakInfo}  datasets={ datasets} options={{
+            responsive: true,
+            plugins: { legend: { position: "bottom" } },
+            scales: {
+              x: { title: { display: true, text: "Hour of Day" } },
+              y: { title: { display: true, text: "kWh" }, beginAtZero: true },
+            },
+          }}/>
+
+
+          <ChartCard title='Category Breakdown' type='pie' labels={categoryLabels}  datasets={ [
+            {
+              data: categoryData,
+              backgroundColor: ["#189AB4", "#FFD166", "#06D6A0"],
+            },
+          ]} options= { {responsive: true }}/>
+      </div>
+    </main>
   );
+}
+
+function getPeakUsage(totalData: number[],hours: string[], rooms: Record<string, number[]>) {
+  let peakIdx = totalData.reduce((maxI, v, i, a) => (v > a[maxI] ? i : maxI),0 );
+  let peakTime = hours[peakIdx]
+  let peakVal = totalData[peakIdx];
+
+  let peakInfo = `Highest consumption today: ${peakTime} – ${peakVal.toFixed(2)} kWh`
+        // build datasets
+        const datasets :any[] = [
+          {
+            label: "Total",
+            data: totalData,
+            borderColor: "#0F6F89",
+            backgroundColor: "rgba(15,111,137,0.1)",
+            fill: true,
+            pointRadius: 4,
+            pointBackgroundColor: totalData.map((_, i) =>
+              i === peakIdx ? "#FDB750" : "rgba(15,111,137,0.6)"
+            ),
+          },
+        ];
+
+        const palette = ["#189AB4", "#06D6A0", "#EF476F", "#FFD166"];
+        Object.entries(rooms).forEach(([name, data], idx) => {
+          datasets.push({
+            label: name,
+            data,
+            borderDash: [5, 5],
+            borderColor: palette[idx % palette.length],
+            pointRadius: 0,
+            fill: false,
+          });
+        });
+  return { peakInfo, datasets };
 }
