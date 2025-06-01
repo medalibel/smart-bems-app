@@ -42,13 +42,13 @@ export default function Page() {
   let { peakInfo, datasets } = getPeakUsage(totalData, hours, roomsData);
   return (
     <main className="flex min-h-screen flex-col items-center">
-      <div className='flex gap-5'>
+      <div className='flex flex-wrap md:flex-nowrap w-full max-w-[1200px] justify-center gap-5'>
         <StatCard title="Today's Total Consumption" value="3.54 kWh" /> 
         <StatCard title="Daily Cost" value="$4.28" /> 
         <StatCard title="Savings This Day" value="5% / $1.12" /> 
         <StatCard title="Yesterday’s Consump & Cost" value="7.12 kWh / $8.60" />  
       </div>
-      <div className=" w-full max-w-[1280px] grid grid-cols-1 md:[grid-template-columns:repeat(2,minmax(300px,1fr))] gap-5 mt-8">
+      <div className=" w-full max-w-[1200px] grid grid-cols-1 md:[grid-template-columns:repeat(2,minmax(300px,1fr))] gap-5 mt-8">
 
         <ChartCard title='Real-Time Usage' type='line' labels={realTimeLabels}  datasets={ [
             {

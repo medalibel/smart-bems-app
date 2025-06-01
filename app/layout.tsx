@@ -40,7 +40,7 @@ export default function RootLayout({
             <h1 className=" text-2xl text-white font-bold">SmartHome Energy Management System</h1>
             <div className="text-xl">🔔 👤</div>
           </div>
-          <nav className="flex items-center justify-center gap-5 bg-[#188bb4] text-white p-3">
+          <nav className="flex flex-wrap items-center justify-center gap-5 bg-[#188bb4] text-white p-3">
             <TopNav />
           </nav>
         </header>
