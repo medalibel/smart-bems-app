@@ -146,10 +146,10 @@ export default function Page() {
   return (
     <main className="flex min-h-screen flex-col items-center">
       <div className='flex flex-wrap md:flex-nowrap w-full max-w-[1200px] justify-center gap-5'>
-        <StatCard title="Today's Total Consumption" value={todayTotal.toFixed(3)+' KWh'} /> 
-        <StatCard title="Daily Cost" value="$4.28" /> 
-        <StatCard title="Savings This Day" value="5% / $1.12" /> 
-        <StatCard title="Yesterday’s Consump & Cost" value={(weeklyData.length > 0? weeklyData[weeklyData.length-2]:0) + " kWh / $8.60"} />  
+        <StatCard title="Today's Total Consumption" info={todayTotal.toFixed(3)+' KWh'} /> 
+        <StatCard title="Daily Cost" info={(todayTotal*5.34).toFixed(2)+' DZD'} /> 
+        <StatCard title="Savings This Day" info="5% / $1.12" /> 
+        <StatCard title="Yesterday’s Consump & Cost" info={(weeklyData.length > 0? weeklyData[weeklyData.length-2]:0) + " kWh / "+(weeklyData.length > 0? (weeklyData[weeklyData.length-2]*5.34).toFixed(2):0)+' DZD'} />  
       </div>
 
       <div className=" w-full max-w-[1200px] grid grid-cols-1 md:[grid-template-columns:repeat(2,minmax(300px,1fr))] gap-5 mt-8">

@@ -4,9 +4,9 @@ import { useState, } from "react";
 import ChartCard from "./chart-card";
 
 
-export default function ConsumptionOverview({consumptionData}:{consumptionData: {labelsDaily: string[], dataDaily: number[]}}) {
+export default function ConsumptionOverview({labels, data}: {labels: string[], data: number[]}) {
   const [selected,setSelected] = useState("daily");
-  const {total, avg, peak} = updateStats(consumptionData.dataDaily);
+  const {total, avg, peak} = updateStats(data);
 
   
   
@@ -25,9 +25,9 @@ export default function ConsumptionOverview({consumptionData}:{consumptionData: 
           <button className="bg-[#188bb4] text-white border-none px-4 py-[6px] rounded cursor-pointer text-sm active:bg-[#0f6f89]" data-view="yearly">Yearly</button>
         </div>
 
-        <ChartCard height={100} type='line' labels={consumptionData.labelsDaily} datasets={ [{
+        <ChartCard height={100} type='line' labels={labels} datasets={ [{
           label: "Daily Usage (kWh)",
-          data: consumptionData.dataDaily,
+          data: data,
           borderColor: "#189AB4",
           backgroundColor: "rgba(24,154,180,0.2)",
           fill: true,
