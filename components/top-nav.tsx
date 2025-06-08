@@ -7,16 +7,16 @@ import clsx from 'clsx';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
-  { name: 'Real Time', href: '/',  },
+  { name: 'Real Time', href: '/dashboard',  },
   {
     name: 'Usage History',
     href: '/history',
     
   },
-  { name: 'Forecasting', href: '/forecasting', },
-  { name: 'Reports', href: '/reports',  },
-  { name: 'Bills', href: '/bills',  },
-  { name: 'Settings', href: '/settings',  },
+  { name: 'Forecasting', href: '/dashboard/forecasting', },
+  { name: 'Reports', href: '/dashboard/reports',  },
+  { name: 'Bills', href: '/dashboard/bills',  },
+  { name: 'Settings', href: '/dashboard/settings',  },
 ];
 
 export default function TopNav() {

@@ -1,5 +1,6 @@
 'use client';
 import {useState, useEffect } from 'react';
+import {useRouter} from 'next/navigation'
 import { Mulish,Lusitana } from 'next/font/google';
 import StatCard  from '@/components/stat-card';
 import ChartCard from '@/components/chart-card';
@@ -9,6 +10,7 @@ const mulish = Mulish({
 });
 
 export default function Page() {
+  const router = useRouter()
   const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5001/api";
   const [data, setData] = useState<any>(null);
@@ -67,8 +69,22 @@ export default function Page() {
   }
   const fetchData = async () => {
     try {
-      const response = await fetch(`${API_URL}/consumption/today`);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+      const response = await fetch(`${API_URL}/consumption/today`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       if (!response.ok) {
+        if(response.status === 401)
+        {
+          router.push('/login')
+          return
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
@@ -124,8 +140,22 @@ export default function Page() {
 
   const fetchWeeklyData = async () => {
     try {
-      const response = await fetch(`${API_URL}/consumption/lastweek`);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+      const response = await fetch(`${API_URL}/consumption/lastweek`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       if (!response.ok) {
+        if(response.status === 401)
+        {
+          router.push('/login')
+          return
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
