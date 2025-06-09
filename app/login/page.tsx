@@ -1,5 +1,5 @@
 'use client';
-import { useState,useEffect } from 'react';
+import { useState,useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -33,6 +33,14 @@ export default function LoginPage() {
       }
   };
 
+  useEffect(()=>{
+    const token = localStorage.getItem('token');
+      if (token) {
+        // check if the token is valid first
+        //router.push('/dashboard');
+        return;
+      }
+  },[])
   return (
     <div className='w-full flex justify-center p-8'>
       <div className='bg-white p-8 rounded-lg shadow-md md:w-[750px]'>

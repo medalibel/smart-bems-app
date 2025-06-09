@@ -2,8 +2,10 @@
 import ConsumptionOverview from "@/components/consumption-overview";
 import ChartCard from "@/components/chart-card";
 import {useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 
 export default function HistoryPage() {
+  const router = useRouter()
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5001/api";
   const labelsDaily = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const [labels, setLabels] = useState<string[]>(labelsDaily);
@@ -13,12 +15,27 @@ export default function HistoryPage() {
   const [roomLabels, setRoomLabels] = useState<string[]>([]);
   const [roomData, setRoomData] = useState<number[]>([]);
   const [preset, setPreset] = useState<string>(''); // default to weekly
+  const [token,setToken] = useState('')
   
 
   const fetchWeeklyData = async () => {
     try {
-      const response = await fetch(`${API_URL}/consumption/lastweek`);
-      if (!response.ok) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+      const response = await fetch(`${API_URL}/consumption/lastweek`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+     if (!response.ok) {
+        if(response.status === 401)
+        {
+          router.push('/login')
+          return
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
@@ -61,10 +78,25 @@ export default function HistoryPage() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${API_URL}/consumption/${startDate}/${endDate}?preset=${preset}`);
-      if (!response.ok) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+      const response = await fetch(`${API_URL}/consumption/${startDate}/${endDate}?preset=${preset}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+     if (!response.ok) {
+        if(response.status === 401)
+        {
+          router.push('/login')
+          return
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
       const result = await response.json();
 
       const start = new Date(result[0].day);
@@ -106,6 +138,8 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchWeeklyData();
+    const t = localStorage.getItem('token');
+    setToken(t? t : '')
   }, []);
 
   return (
@@ -154,8 +188,28 @@ export default function HistoryPage() {
         <section className="w-full max-w-[1200px] p-5 bg-white rounded-xl shadow-md mt-5">
           <h2 className="text-2xl font-bold text-[#189ab4] mb-5">🧮 Download Data</h2>
           <div className="flex gap-4" >
-            <a className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" href={`${API_URL}/consumption/download/${startDate}/${endDate}`}>Download</a>
-            
+            <button className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" 
+            onClick={async (e)=>{
+              e.preventDefault();
+              const res = await fetch(`${API_URL}/consumption/download/${startDate}/${endDate}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+
+              const blob = await res.blob();
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', `history_${startDate}_${endDate}.csv`);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              window.URL.revokeObjectURL(url);
+            }}
+          >
+            Download
+          </button>
           </div>
         </section>
       

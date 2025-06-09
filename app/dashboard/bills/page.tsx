@@ -1,9 +1,9 @@
 'use client';
-import ConsumptionOverview from "@/components/consumption-overview";
 import { useState,useEffect } from "react";
+import {useRouter} from 'next/navigation'
 import ChartCard from "@/components/chart-card";
-import { error } from "console";
 export default function HistoryPage() {
+  const router = useRouter()
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5001/api";
   const [quarter, setQuarter] = useState<string>('0');
   const [year, setYear] = useState<string>('');
@@ -17,14 +17,29 @@ export default function HistoryPage() {
   const [energyData, setEnergyData] = useState<number[]>([]);
   const [costData, setCostData] = useState<number[]>([]);
   const [forecastQ, setForecastQ] = useState<string>(''); // Placeholder for next quarter forecast
+  const [token,setToken] = useState('')
 
   const fetchBillsData = async () => {
     try {
-      const response = await fetch(`${API_URL}/bills`);
-      if (!response.ok) {
+      const t = localStorage.getItem('token');
+      if (!t) {
+        router.push('/login');
+        return;
+      }
+      const response = await fetch(`${API_URL}/bills`,{
+          headers: {
+            Authorization: `Bearer ${t}`,
+          },
+        });
+     if (!response.ok) {
+        if(response.status === 401)
+        {
+          router.push('/login')
+          return
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      
       const result = await response.json();
       let b:any = {};
       for (const item of result) {
@@ -96,8 +111,22 @@ export default function HistoryPage() {
   const fetchQuarterlyData = async () => {
     
     try {
-      const response = await fetch(`${API_URL}/consumption/quarter/${quarter}/${year}`);
-      if (!response.ok) {
+      const t = localStorage.getItem('token');
+      if (!t) {
+        router.push('/login');
+        return;
+      }
+      const response = await fetch(`${API_URL}/consumption/quarter/${quarter}/${year}`,{
+          headers: {
+            Authorization: `Bearer ${t}`,
+          },
+        });
+     if (!response.ok) {
+        if(response.status === 401)
+        {
+          router.push('/login')
+          return
+        }
         const res = await response.json();
         setError(res.error || 'An error occurred while fetching data');
         return;
@@ -138,6 +167,9 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchBillsData();
+    const t = localStorage.getItem('token');
+    setToken(t? t : '')
+    
   }, []);
 
   return (
@@ -296,11 +328,32 @@ export default function HistoryPage() {
       <section className="w-full max-w-[1200px] p-5 bg-white rounded-xl shadow-md mt-5">
         <h2 className="text-2xl font-bold text-[#189ab4] mb-5">📥 Export & Share</h2>
         <div className="flex gap-4" >
-          <button className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2">
+          <button className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" 
+          >
             Download PDF
           </button>
-          <a className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" href={`${API_URL}/bills/download/${quarter}/${year}`}> Export CSV</a>
-          
+          <button className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" 
+            onClick={async (e)=>{
+              e.preventDefault();
+              const res = await fetch(`${API_URL}/bills/download/${quarter}/${year}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+
+              const blob = await res.blob();
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', `bills_${quarter}_${year}.csv`);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              window.URL.revokeObjectURL(url);
+            }}
+          >
+            Download CSV
+          </button>
         </div>
       </section>
       
