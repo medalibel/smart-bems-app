@@ -242,6 +242,12 @@ export default function SettingsPage() {
         <button className="bg-[#0f6f89] text-white border-none px-4 py-[6px] rounded cursor-pointer text-sm" onClick={()=> updateUserData()}>
             Save Profile
         </button>
+        <button className="bg-red-500 ml-4 text-white border-none px-4 py-[6px] rounded cursor-pointer text-sm" 
+          onClick={()=> 
+          {localStorage.removeItem('token');
+            router.push('/login')}}>
+            Logout
+        </button>
         {updateStatus === 'error' && (<p className=' text-red-400'>{'Could not update user info'}</p>)}
         {updateStatus === 'ok' && (<p className=' text-green-400'>{'User info updated'}</p>)}
       </section>
