@@ -90,13 +90,24 @@ export default function HistoryPage() {
           }
         }
       }
-      const billsArray = Object.entries(b).map(([key, value]: [any,any]) => ({
+      let last = ''
+      const billsArray = Object.entries(b).map(([key, value]: [any,any]) => {
+        let delta = '-%'
+        if(b[last])
+        {
+          let old = b[last].energy
+          let difference = value.energy - old
+          const percentageDifference = (difference / old) * 100;
+          delta =  `${percentageDifference.toFixed(2)}%`
+        }
+        last = key
+        return {
         quarter: key,
         period: value.period,
         energy: value.energy.toFixed(2),
         amount: (value.energy * 5.34).toFixed(2), // Assuming 5.34 DA per kWh
-        delta: '–', // Placeholder for percentage change
-      }));
+        delta, // Placeholder for percentage change
+      }});
       let q = billsArray[billsArray.length - 1].quarter.split('-')[0];
       let y = billsArray[billsArray.length - 1].quarter.split('-')[1];
       let f = `Q${q === 'Q4' ? '1' : (Number(q.split('Q')[1]) + 1)} ${q === 'Q4' ? (Number(y)+1) : (y)}`;

@@ -172,15 +172,22 @@ export default function Page() {
     fetchWeeklyData();
   }, []);
 
-
+  let savings = '-% / -DZD'
+  if(weeklyData.length > 0)
+  {
+    let old = weeklyData[weeklyData.length-2]
+    let difference = todayTotal - old
+    const percentageDifference = (difference / old) * 100;
+    savings =  `${percentageDifference.toFixed(2)}% / ${(difference*5.34).toFixed(2)}DZD`
+  }
   return (
     <main className="flex min-h-screen flex-col items-center">
       <div className='flex flex-wrap md:flex-nowrap w-full max-w-[1200px] justify-center gap-5'>
         <StatCard title="Today's Total Consumption" info={todayTotal.toFixed(3)+' KWh'} /> 
         <StatCard title="Daily Cost" info={(todayTotal*5.34).toFixed(2)+' DZD'} /> 
-        <StatCard title="Savings This Day" info="5% / $1.12" /> 
         <StatCard title="Yesterday’s Consump & Cost" info={(weeklyData.length > 0? weeklyData[weeklyData.length-2]:0) + " kWh / "+(weeklyData.length > 0? (weeklyData[weeklyData.length-2]*5.34).toFixed(2):0)+' DZD'} />  
-      </div>
+        <StatCard title="Savings This Day" info={savings} /> 
+        </div>
 
       <div className=" w-full max-w-[1200px] grid grid-cols-1 md:[grid-template-columns:repeat(2,minmax(300px,1fr))] gap-5 mt-8">
 
