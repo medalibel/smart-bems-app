@@ -141,9 +141,7 @@ export default function HistoryPage() {
      <section className="w-full max-w-[1200px] p-5 bg-white rounded-xl shadow-md mt-5">
         <h2 className="text-2xl font-bold text-[#189ab4] mb-5">📥 Actions</h2>
         <div className="flex gap-4" >
-          <button className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2">
-            Download PDF
-          </button>
+          <a className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" href="http://127.0.0.1:5001/api/download/report">Download PDF</a>
           <button className="bg-[#06d6a0] text-[#034d3f] border-none px-4 py-2 rounded cursor-pointer mr-2" >Share by Email</button>
         </div>
       </section>
