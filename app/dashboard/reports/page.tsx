@@ -108,7 +108,7 @@ export default function HistoryPage() {
         </div>
       </section>
 
-      <section className="w-full max-w-[1200px] p-5 bg-white rounded-xl shadow-md mt-5">
+      {/* <section className="w-full max-w-[1200px] p-5 bg-white rounded-xl shadow-md mt-5">
         <h2 className="text-2xl font-bold text-[#189ab4]">🖼️ Charts Gallery</h2>
       
         <div className="flex gap-3 justify-center mb-5 w-full">
@@ -136,7 +136,7 @@ export default function HistoryPage() {
             }}/>
         </div>
     
-      </section>
+      </section> */}
      
      <section className="w-full max-w-[1200px] p-5 bg-white rounded-xl shadow-md mt-5">
         <h2 className="text-2xl font-bold text-[#189ab4] mb-5">📥 Actions</h2>
